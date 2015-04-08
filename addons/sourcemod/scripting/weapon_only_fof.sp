@@ -2,7 +2,6 @@
 
 #include <sourcemod>
 #include <sdktools>
-#include <sdkhooks>
 
 new bool:bMeleeOnly = false;
 new nKicksMode = 0;
@@ -46,6 +45,7 @@ public OnPluginStart()
 
     HookConVarChange(g_Cvar_Enabled, OnEnabledChange);
     HookConVarChange(g_Cvar_TargetWeapon, OnTargetWeaponChange);
+
     HookEvent("player_spawn", Event_PlayerSpawn);
 
     AutoExecConfig();
@@ -68,7 +68,7 @@ public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newVal
     {
         new String:weapon[WEAPON_NAME_SIZE];
         GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
-        ForceEquipWeaponAll(newValue);
+        ForceEquipWeaponAll(weapon);
     }
 }
 
@@ -103,17 +103,19 @@ public Action:PlayerSpawnDelay( Handle:timer, any:player )
     if(!IsPlayerAlive(client)) return Plugin_Handled;
     if(!IsWeaponOnlyEnabled()) return Plugin_Handled;
 
-    ForceEquipWeapon(client, "weapon_dynamite");
+    new String:weapon[WEAPON_NAME_SIZE];
+    GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
+    ForceEquipWeapon(client, weapon);
 
     return Plugin_Handled;
 }
 
 ForceEquipWeapon(client, const String:weapon[])
 {
-    //TODO cheat command
     new String:tmp[WEAPON_NAME_SIZE];
-    Format(tmp, sizeof(tmp), "give %s", weapon);
-    FakeClientCommand(client, tmp);
+
+    GivePlayerItem(client, weapon);
+
     Format(tmp, sizeof(tmp), "use %s", weapon);
     ClientCommand(client, tmp);//TODO switch to fake?
 }
@@ -122,6 +124,9 @@ ForceEquipWeaponAll(const String:weapon[])
 {
     for (new client=1; client <= MaxClients; client++)
     {
+        if(!IsClientInGame(client)) continue;
+        if(!IsPlayerAlive(client)) continue;
+
         ForceEquipWeapon(client, weapon);
     }
 }
@@ -134,7 +139,7 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
     if(!IsWeaponOnlyEnabled()) return Plugin_Continue;
 
     new active_weapons[2];
-    new String:class_name[WEAPON_NAME_SIZE], String:target_weapon[WEAPON_NAME_SIZE], String:tmp[WEAPON_NAME_SIZE];
+    new String:class_name[WEAPON_NAME_SIZE], String:target_weapon[WEAPON_NAME_SIZE], String:target_weapon2[WEAPON_NAME_SIZE];
 
     GetConVarString(g_Cvar_TargetWeapon, target_weapon, sizeof(target_weapon));
 
@@ -147,10 +152,13 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
         if(!IsValidEdict(active_weapons[w])) continue;
 
         GetEntityClassname(active_weapons[w], class_name, sizeof(class_name));
-        if(!(StrEqual(class_name, target_weapon) || StrEqual(class_name, "weapon_fists")) )
+        Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
+        if(!(StrEqual(class_name, target_weapon) || StrEqual(class_name, target_weapon2) || StrEqual(class_name, "weapon_fists")) )
         {
-            Format(tmp, sizeof(tmp), "use %s", target_weapon);
-            ClientCommand(client, tmp);//TODO switch to fake?
+            RemovePlayerItem(client, active_weapons[w]);
+            RemoveEdict(active_weapons[w]);
+            //Format(tmp, sizeof(tmp), "use %s", target_weapon);
+            //ClientCommand(client, tmp);//TODO switch to fake?
         }
     }
 
