@@ -154,7 +154,7 @@ StripInvalidWeapons(client, const String:target_weapon[])
     decl String:class_name[WEAPON_NAME_SIZE], String:target_weapon2[WEAPON_NAME_SIZE];
     new weapon_ent, strip_occured=false, has_target_weapon=false;
 
-    //Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
+    Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
     for (new slot=0; slot<6; slot++)
     {
         weapon_ent = GetPlayerWeaponSlot(client, slot);
@@ -162,12 +162,12 @@ StripInvalidWeapons(client, const String:target_weapon[])
 
         GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
 
-        if(StrEqual(class_name, target_weapon))
+        if(StrEqual(class_name, target_weapon) || StrEqual(class_name, target_weapon2))
         {
             has_target_weapon = true;
         }
 
-        if(!(StrEqual(class_name, target_weapon) || StrEqual(class_name, "weapon_fists")) )
+        if(!(StrEqual(class_name, target_weapon) || StrEqual(class_name, target_weapon2) || StrEqual(class_name, "weapon_fists")) )
         {
             strip_occured=true;
             RemovePlayerItem(client, weapon_ent);
