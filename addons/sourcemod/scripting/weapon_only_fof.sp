@@ -51,6 +51,11 @@ public OnPluginStart()
     AutoExecConfig();
 }
 
+public OnMapStart()
+{
+    CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
+}
+
 public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newValue[])
 {
     if(cvar != g_Cvar_Enabled) return;
@@ -68,7 +73,7 @@ public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newVal
     {
         new String:weapon[WEAPON_NAME_SIZE];
         GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
-        ForceEquipWeaponAll(weapon);
+        StripInvalidWeaponsAll(weapon);
     }
 }
 
@@ -77,7 +82,7 @@ public OnTargetWeaponChange(Handle:cvar, const String:oldValue[], const String:n
     if(cvar != g_Cvar_TargetWeapon) return;
     if(!IsWeaponOnlyEnabled()) return;
 
-    ForceEquipWeaponAll(newValue);
+    StripInvalidWeaponsAll(newValue);
 }
 
 bool:IsWeaponOnlyEnabled()
@@ -105,7 +110,7 @@ public Action:PlayerSpawnDelay( Handle:timer, any:player )
 
     new String:weapon[WEAPON_NAME_SIZE];
     GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
-    ForceEquipWeapon(client, weapon);
+    StripInvalidWeapons(client, weapon);
 
     return Plugin_Handled;
 }
@@ -131,36 +136,59 @@ ForceEquipWeaponAll(const String:weapon[])
     }
 }
 
-public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon, &subtype, &cmdnum, &tickcount, &seed, mouse[2])
+public Action:Timer_Repeat(Handle:timer)
 {
-    if(client <= 0) return Plugin_Continue;
-    if(!IsClientInGame(client)) return Plugin_Continue;
-    if(!IsPlayerAlive(client)) return Plugin_Continue;
     if(!IsWeaponOnlyEnabled()) return Plugin_Continue;
 
-    new active_weapons[2];
-    new String:class_name[WEAPON_NAME_SIZE], String:target_weapon[WEAPON_NAME_SIZE], String:target_weapon2[WEAPON_NAME_SIZE];
+    //LogMessage("HIT %d", time_left);//TODO
+    new String:weapon[WEAPON_NAME_SIZE];
+    GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
+    
+    StripInvalidWeaponsAll(weapon);
 
-    GetConVarString(g_Cvar_TargetWeapon, target_weapon, sizeof(target_weapon));
+    return Plugin_Handled;
+}
 
-    active_weapons[0] = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
-    active_weapons[1] = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon2");
+StripInvalidWeapons(client, const String:target_weapon[])
+{
+    decl String:class_name[WEAPON_NAME_SIZE], String:target_weapon2[WEAPON_NAME_SIZE];
+    new weapon_ent, strip_occured=false, has_target_weapon=false;
 
-    for(new w = 0; w < sizeof(active_weapons); w++)
+    //Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
+    for (new slot=0; slot<6; slot++)
     {
-        if(active_weapons[w] <= 0) continue;
-        if(!IsValidEdict(active_weapons[w])) continue;
+        weapon_ent = GetPlayerWeaponSlot(client, slot);
+        if(weapon_ent <= 0) continue;
 
-        GetEntityClassname(active_weapons[w], class_name, sizeof(class_name));
-        Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
-        if(!(StrEqual(class_name, target_weapon) || StrEqual(class_name, target_weapon2) || StrEqual(class_name, "weapon_fists")) )
+        GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
+
+        if(StrEqual(class_name, target_weapon))
         {
-            RemovePlayerItem(client, active_weapons[w]);
-            RemoveEdict(active_weapons[w]);
-            //Format(tmp, sizeof(tmp), "use %s", target_weapon);
-            //ClientCommand(client, tmp);//TODO switch to fake?
+            has_target_weapon = true;
+        }
+
+        if(!(StrEqual(class_name, target_weapon) || StrEqual(class_name, "weapon_fists")) )
+        {
+            strip_occured=true;
+            RemovePlayerItem(client, weapon_ent);
+            RemoveEdict(weapon_ent);
         }
     }
 
-    return Plugin_Continue;
+    if(strip_occured && !has_target_weapon)
+    {
+        ForceEquipWeapon(client, target_weapon);
+    }
+
+}
+
+StripInvalidWeaponsAll(const String:target_weapon[])
+{
+    for (new client=1; client <= MaxClients; client++)
+    {
+        if(!IsClientInGame(client)) continue;
+        if(!IsPlayerAlive(client)) continue;
+
+        StripInvalidWeapons(client, target_weapon);
+    }
 }
