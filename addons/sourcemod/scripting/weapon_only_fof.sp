@@ -3,10 +3,6 @@
 #include <sourcemod>
 #include <sdktools>
 
-new bool:bMeleeOnly = false;
-new nKicksMode = 0;
-new bool:bAutoFF = false;
-
 #define PLUGIN_VERSION "1.0.0"
 #define PLUGIN_NAME  "[FoF] Weapon Only"
 
@@ -42,6 +38,8 @@ public OnPluginStart()
             "The class name of the weapon",
             FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY
             );
+
+    RegAdminCmd("sm_only", Command_Only, ADMFLAG_SLAY, "[ADMIN] Set to one type of weapon only.");
 
     HookConVarChange(g_Cvar_Enabled, OnEnabledChange);
     HookConVarChange(g_Cvar_TargetWeapon, OnTargetWeaponChange);
@@ -190,5 +188,66 @@ StripInvalidWeaponsAll(const String:target_weapon[])
         if(!IsPlayerAlive(client)) continue;
 
         StripInvalidWeapons(client, target_weapon);
+    }
+}
+
+public Action:Command_Only(client, args)
+{
+    if(client <= 0) return Plugin_Handled;
+    if(!IsClientInGame(client)) return Plugin_Handled;
+
+    new Handle:menu = CreateMenu(WeaponOnlyMenuHandler);
+
+    SetMenuTitle(menu, "Choose Weapon");
+
+    AddMenuItem(menu, "disable", "Disable");
+    AddMenuItem(menu, "weapon_axe", "Hatchet");
+    AddMenuItem(menu, "weapon_bow", "Bow");
+    AddMenuItem(menu, "weapon_carbine", "Smith Carbine");
+    AddMenuItem(menu, "weapon_coachgun", "Coach Shotgun");
+    AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
+    AddMenuItem(menu, "weapon_deringer", "Deringer");
+    AddMenuItem(menu, "weapon_volcanic", "Volcanic Pistol");
+    AddMenuItem(menu, "weapon_dynamite", "Dynamite");
+    AddMenuItem(menu, "weapon_dynamite_black", "Black Dynamite");
+    AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
+    AddMenuItem(menu, "weapon_knife", "Knife");
+    AddMenuItem(menu, "weapon_henryrifle", "Mare's Leg");
+    AddMenuItem(menu, "weapon_peacemaker", "Peacemaker");
+    AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
+    AddMenuItem(menu, "weapon_schofield", "SW Schofield");
+    AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
+    AddMenuItem(menu, "weapon_shotgun", "Pump Shotgun W1893");
+    AddMenuItem(menu, "weapon_walker", "Colt Walker");
+    AddMenuItem(menu, "weapon_tmp", "TMP");
+    AddMenuItem(menu, "weapon_mac10", "Mac 10");
+    AddMenuItem(menu, "weapon_mp5navy", "MP5 Navy");
+    AddMenuItem(menu, "weapon_ump45", "UMP45");
+    AddMenuItem(menu, "weapon_p90", "P90");
+
+    DisplayMenu(menu, client, 20);
+
+    return Plugin_Handled;
+}
+
+public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
+{
+    switch (action)
+    {
+        case MenuAction_Select:
+            {
+                new client = param1;
+                new String:weapon[32];
+                GetMenuItem(menu, param2, weapon, sizeof(weapon));
+
+                if(StrEqual(weapon, "default"))
+                {
+                    SetConVarBool(g_Cvar_Enabled, false);
+                }else{
+                    SetConVarBool(g_Cvar_Enabled, true);
+                    SetConVarString(g_Cvar_TargetWeapon, weapon);
+                }
+            }
+        case MenuAction_End: CloseHandle(menu);
     }
 }
