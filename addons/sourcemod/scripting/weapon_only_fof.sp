@@ -151,13 +151,13 @@ StripInvalidWeapons(client, const String:target_weapon[])
 {
     decl String:class_name[WEAPON_NAME_SIZE], String:target_weapon2[WEAPON_NAME_SIZE];
     new weapon_ent, strip_occured=false, has_target_weapon=false;
+    new offs = FindSendPropInfo("CBasePlayer","m_hMyWeapons");
 
     Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
-    for (new slot=0; slot<6; slot++)
+    for(new i = 0; i <= 47; i++)
     {
-        weapon_ent = GetPlayerWeaponSlot(client, slot);
-        if(weapon_ent <= 0) continue;
-
+        weapon_ent = GetEntDataEnt2(client,offs + (i * 4));
+        if(weapon_ent == -1) continue;
         GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
 
         if(StrEqual(class_name, target_weapon) || StrEqual(class_name, target_weapon2))
