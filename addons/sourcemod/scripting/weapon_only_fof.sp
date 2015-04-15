@@ -34,7 +34,7 @@ public OnPluginStart()
             1.0);
     g_Cvar_TargetWeapon = CreateConVar(
             "sm_weapon_only_weapon",
-            "weapon_dynamite_black",
+            "none",
             "The class name of the weapon",
             FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY
             );
@@ -201,29 +201,24 @@ public Action:Command_Only(client, args)
     SetMenuTitle(menu, "Choose Weapon");
 
     AddMenuItem(menu, "disable", "Disable");
+    AddMenuItem(menu, "weapon_knife", "Knife");
     AddMenuItem(menu, "weapon_axe", "Hatchet");
-    AddMenuItem(menu, "weapon_bow", "Bow");
-    AddMenuItem(menu, "weapon_carbine", "Smith Carbine");
-    AddMenuItem(menu, "weapon_coachgun", "Coach Shotgun");
-    AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
-    AddMenuItem(menu, "weapon_deringer", "Deringer");
-    AddMenuItem(menu, "weapon_volcanic", "Volcanic Pistol");
     AddMenuItem(menu, "weapon_dynamite", "Dynamite");
     AddMenuItem(menu, "weapon_dynamite_black", "Black Dynamite");
-    AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
-    AddMenuItem(menu, "weapon_knife", "Knife");
+    AddMenuItem(menu, "weapon_deringer", "Deringer");
+    AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
+    AddMenuItem(menu, "weapon_schofield", "SW Schofield");
+    AddMenuItem(menu, "weapon_volcanic", "Volcanic Pistol");
     AddMenuItem(menu, "weapon_henryrifle", "Mare's Leg");
     AddMenuItem(menu, "weapon_peacemaker", "Peacemaker");
-    AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
-    AddMenuItem(menu, "weapon_schofield", "SW Schofield");
-    AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
-    AddMenuItem(menu, "weapon_shotgun", "Pump Shotgun W1893");
     AddMenuItem(menu, "weapon_walker", "Colt Walker");
-    AddMenuItem(menu, "weapon_tmp", "TMP");
-    AddMenuItem(menu, "weapon_mac10", "Mac 10");
-    AddMenuItem(menu, "weapon_mp5navy", "MP5 Navy");
-    AddMenuItem(menu, "weapon_ump45", "UMP45");
-    AddMenuItem(menu, "weapon_p90", "P90");
+    AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
+    AddMenuItem(menu, "weapon_coachgun", "Coach Shotgun");
+    AddMenuItem(menu, "weapon_shotgun", "Pump Shotgun W1893");
+    AddMenuItem(menu, "weapon_bow", "Bow");
+    AddMenuItem(menu, "weapon_carbine", "Smith Carbine");
+    AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
+    AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
 
     DisplayMenu(menu, client, 20);
 
@@ -240,7 +235,7 @@ public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
                 new String:weapon[32];
                 GetMenuItem(menu, param2, weapon, sizeof(weapon));
 
-                if(StrEqual(weapon, "default"))
+                if(StrEqual(weapon, "none"))
                 {
                     SetConVarBool(g_Cvar_Enabled, false);
                 }else{
