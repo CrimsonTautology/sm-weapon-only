@@ -239,8 +239,8 @@ public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
                 {
                     SetConVarBool(g_Cvar_Enabled, false);
                 }else{
-                    SetConVarBool(g_Cvar_Enabled, true);
                     SetConVarString(g_Cvar_TargetWeapon, weapon);
+                    SetConVarBool(g_Cvar_Enabled, true);
                 }
             }
         case MenuAction_End: CloseHandle(menu);
