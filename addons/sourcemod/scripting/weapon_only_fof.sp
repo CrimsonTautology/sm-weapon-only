@@ -220,6 +220,24 @@ public Action:Command_Only(client, args)
     AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
     AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
 
+    AddMenuItem(menu, "357", "weapon_357");
+    AddMenuItem(menu, "Annabelle", "weapon_annabelle");
+    AddMenuItem(menu, "AR2", "weapon_ar2");
+    AddMenuItem(menu, "BugBait", "weapon_bugbait");
+    AddMenuItem(menu, "Crossbow", "weapon_crossbow");
+    AddMenuItem(menu, "Crowbar", "weapon_crowbar");
+    AddMenuItem(menu, "Cubemap", "weapon_cubemap");
+    AddMenuItem(menu, "FistsGhost", "weapon_fists_ghost");
+    AddMenuItem(menu, "Frag", "weapon_frag");
+    AddMenuItem(menu, "HL2MPBase", "weapon_hl2mp_base");
+    AddMenuItem(menu, "PhysCannon", "weapon_physcannon");
+    AddMenuItem(menu, "Pistol", "weapon_pistol");
+    AddMenuItem(menu, "RPG", "weapon_rpg");
+    AddMenuItem(menu, "Shotgun", "weapon_shotgun2");
+    AddMenuItem(menu, "_SLAM", "weapon_slam");
+    AddMenuItem(menu, "SMG1", "weapon_smg1");
+    AddMenuItem(menu, "StunStick", "weapon_stunstick");
+
     DisplayMenu(menu, client, 20);
 
     return Plugin_Handled;
