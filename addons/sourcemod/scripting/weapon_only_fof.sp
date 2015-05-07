@@ -120,7 +120,7 @@ ForceEquipWeapon(client, const String:weapon[])
     GivePlayerItem(client, weapon);
 
     Format(tmp, sizeof(tmp), "use %s", weapon);
-    ClientCommand(client, tmp);//TODO switch to fake?
+    ClientCommand(client, tmp);
 }
 
 ForceEquipWeaponAll(const String:weapon[])
@@ -138,7 +138,6 @@ public Action:Timer_Repeat(Handle:timer)
 {
     if(!IsWeaponOnlyEnabled()) return Plugin_Continue;
 
-    //LogMessage("HIT %d", time_left);//TODO
     new String:weapon[WEAPON_NAME_SIZE];
     GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
     
