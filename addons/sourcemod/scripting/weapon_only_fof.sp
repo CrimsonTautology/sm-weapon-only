@@ -202,6 +202,7 @@ public Action:Command_Only(client, args)
     AddMenuItem(menu, "none", "Disable");
     AddMenuItem(menu, "weapon_knife", "Knife");
     AddMenuItem(menu, "weapon_axe", "Hatchet");
+    AddMenuItem(menu, "weapon_machete", "Machete");
     AddMenuItem(menu, "weapon_dynamite", "Dynamite");
     AddMenuItem(menu, "weapon_dynamite_black", "Black Dynamite");
     AddMenuItem(menu, "weapon_deringer", "Deringer");
