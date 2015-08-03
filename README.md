@@ -1,4 +1,5 @@
 # Weapon Only
+[![Build Status](https://travis-ci.org/CrimsonTautology/sm_weapon_only.svg?branch=master)](https://travis-ci.org/CrimsonTautology/sm_weapon_only)
 
 Fistful of Frags plugin to force players to use one type of weapon only.  Allows for dual wielding the same type of weapon.
 
