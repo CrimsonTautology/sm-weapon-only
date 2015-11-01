@@ -209,7 +209,7 @@ public Action:Command_Only(client, args)
     AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
     AddMenuItem(menu, "weapon_schofield", "SW Schofield");
     AddMenuItem(menu, "weapon_volcanic", "Volcanic Pistol");
-    AddMenuItem(menu, "weapon_henryrifle", "Mare's Leg");
+    AddMenuItem(menu, "weapon_maresleg", "Mare's Leg");
     AddMenuItem(menu, "weapon_peacemaker", "Peacemaker");
     AddMenuItem(menu, "weapon_walker", "Colt Walker");
     AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
