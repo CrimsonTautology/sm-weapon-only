@@ -222,6 +222,12 @@ public Action:Command_Only(client, args)
 
     AddMenuItem(menu, "weapon_fists_ghost", "FistsGhost");
 
+    AddMenuItem(menu, "weapon_smg1", "Gatling Gun");
+    AddMenuItem(menu, "weapon_rpg", "RPG");
+    AddMenuItem(menu, "weapon_crowbar", "Crowbar");
+    AddMenuItem(menu, "weapon_crossbow", "XBow");
+    AddMenuItem(menu, "weapon_357", "Magnum");
+
     DisplayMenu(menu, client, 20);
 
     return Plugin_Handled;
