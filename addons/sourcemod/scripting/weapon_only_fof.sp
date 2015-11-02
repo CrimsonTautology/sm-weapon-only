@@ -224,9 +224,13 @@ public Action:Command_Only(client, args)
 
     AddMenuItem(menu, "weapon_smg1", "Gatling Gun");
     AddMenuItem(menu, "weapon_rpg", "RPG");
-    AddMenuItem(menu, "weapon_crowbar", "Crowbar");
     AddMenuItem(menu, "weapon_crossbow", "XBow");
-    AddMenuItem(menu, "weapon_357", "Magnum");
+    AddMenuItem(menu, "weapon_357", "HL2 Magnum");
+    AddMenuItem(menu, "weapon_pistol", "HL2 Pistol");
+    AddMenuItem(menu, "weapon_frag", "HL2 Grenade");
+    AddMenuItem(menu, "weapon_physcannon", "Gravity Gun");
+    AddMenuItem(menu, "weapon_crowbar", "Crowbar");
+    AddMenuItem(menu, "weapon_stunstick", "Stun Stick");
 
     DisplayMenu(menu, client, 20);
 
