@@ -1,0 +1,106 @@
+// Crossbow
+
+WeaponData
+{
+	// Weapon data is loaded by both the Game and Client DLLs.
+	"printname"		"#HL2_Crossbow"
+	//"viewmodel"		"models/weapons/v_crossbow.mdl"
+	//"playermodel"	"models/weapons/w_crossbow.mdl"
+	"viewmodel"		"models/weapons/v_xbow.mdl"
+	"playermodel"	"models/weapons/w_bow.mdl"
+	"anim_prefix"	"bow"
+	"bucket"			"3"
+	"bucket_position"	"1"
+	"bucket_360"			"0"
+	"bucket_position_360"	"2"
+
+	"clip_size"		"1"
+	"default_clip"		"1"
+	"primary_ammo"		"XBowBolt"
+	"secondary_ammo"	"None"
+
+	"weight"		"6"
+	"item_flags"		"0"
+
+	"damage"		"100"
+
+	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+	SoundData
+	{
+		"single_shot"	"Weapon_Bow.Single"
+		"reload"	"Weapon_Crossbow.Reload"
+		"special1"	"Weapon_Crossbow.BoltElectrify"
+		"special2"	"Weapon_Bow.ArrowFly"
+	}
+
+	// Weapon Sprite data is loaded by the Client DLL.
+	TextureData
+	{
+		"weapon"
+		{
+				"font"		"WeaponIcons"
+				"character"	"g"
+		}
+		"weapon_s"
+		{	
+				"font"		"WeaponIconsSelected"
+				"character"	"g"
+		}
+		"weapon_small"
+		{
+				"font"		"WeaponIconsSmall"
+				"character"	"g"
+		}
+		"ammo"
+		{
+				"font"		"WeaponIconsSmall"
+				"character"	"w"
+		}
+		"crosshair"
+		{
+				"font"		"Crosshairs"
+				"character"	"Q"
+		}		
+		"autoaim"
+		{
+			"file"		"sprites/crosshairs"
+			"x"		"0"
+			"y"		"96"
+			"width"		"24"
+			"height"	"24"
+		}
+		"zoom"
+		{
+				"font"		"Crosshairs"
+				"character"	"Q"
+		}		
+		"zoom_autoaim"
+		{
+			"file"		"sprites/crosshairs"
+			"x"		"24"
+			"y"		"112"
+			"width"		"104"
+			"height"	"16"
+		}
+	}
+
+	ExpOffset // Ironsight
+  	{
+	     "xf"   "0"
+ 	     "yf"   "0"
+	     "zf"   "1"
+      	}
+
+	Spread // 
+  	{
+	     "crouch"	"0.06"
+ 	     "idle"	"0.06"
+	     "walk"	"0.09"
+	     "run"	"0.16"
+	     "jump"	"0.35"
+	     "speed"	"0.51"		
+      	}
+
+	"break_limit"		"5"
+	"break_drop_penalty"	"5"
+}

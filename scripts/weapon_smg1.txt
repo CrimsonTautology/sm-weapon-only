@@ -1,0 +1,113 @@
+// Small Machine Gun 1
+
+WeaponData
+{
+    // Weapon data is loaded by both the Game and Client DLLs.
+    //"printname" "#HL2_SMG1"
+    "printname" "GatlingGun"
+    //"viewmodel"             "models/weapons/v_smg1.mdl"
+    //"playermodel"         "models/weapons/w_smg1.mdl" //FIXME: 
+    "viewmodel"             "models/weapons/gatling_top.mdl"
+    "playermodel"           "models/weapons/gatling_top.mdl"    //FIXME: 
+    "anim_prefix"           "smg2"
+    "bucket"                "3"
+    "bucket_position"       "0"
+    "bucket_360"            "1"
+    "bucket_position_360"   "0"
+
+    "clip_size"             "128"
+    "clip2_size"            "-1"
+
+    "default_clip"          "128"
+    "default_clip2"         "-1"
+
+    "primary_ammo"          "Rifle"
+    "secondary_ammo"        "Grenade"
+
+    "weight"                "3"
+    "rumble"            "3"
+    "item_flags"            "0"
+    "damage"            "14"
+
+    // Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+    SoundData
+    {
+        "reload"            "Weapon_Carbine.Open"
+        "reload_npc"        "Weapon_Carbine.Open"
+        "empty"             "Weapon_HenryRifle.Empty"
+        "single_shot"       "Weapon_winchester.Single"
+        "single_shot_npc"   "Weapon_winchester.Single"
+        "special1"          "Weapon_sw_shotgun.Single"
+        "special2"          "Weapon_sw_shotgun.Double"
+        "double_shot"       "Weapon_HenryRifle.Single"
+        "burst"             "Weapon_Carbine.Single"
+    }
+
+    // Weapon Sprite data is loaded by the Client DLL.
+    TextureData
+    {
+        "weapon"
+        {
+                "font"      "WeaponIcons"
+                "character" "W"
+        }
+        "weapon_s"
+        {   
+                "font"      "WeaponIconsSelected"
+                "character" "W"
+        }
+        "weapon_small"
+        {
+                "font"      "WeaponIconsSmall"
+                "character" "W"
+        }
+        "ammo"
+        {
+                "font"      "WeaponIconsSmall"
+                "character" "r"
+        }
+        "ammo2"
+        {
+                "font"      "WeaponIconsSmall"
+                "character" "k"
+        }
+        "crosshair"
+        {
+                "font"      "Crosshairs"
+                "character" "Q"
+        }
+        "autoaim"
+        {
+                "file"      "sprites/crosshairs"
+                "x"         "0"
+                "y"         "48"
+                "width"     "24"
+                "height"    "24"
+        }
+    }
+    
+    ExpOffset // Ironsight
+    {
+         "x"   "-1"
+         "y"   "-2"
+         "z"   "0.3"
+         "xf"   "-3"
+         "yf"   "-4"
+         "zf"   "-0.7"
+        }
+
+    Spread // 
+    {
+         "crouch"   "0.33"
+         "idle" "0.333"
+         "walk" "0.345"
+         "run"  "0.5"
+         "jump" "0.65"
+         "speed"    "0.48"      
+        }
+
+
+    "break_limit"       "10"
+    "break_drop_penalty"    "5"
+    "GunSmokeMult"      "0.65"
+}
