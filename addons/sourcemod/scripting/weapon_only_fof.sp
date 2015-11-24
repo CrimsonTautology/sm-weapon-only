@@ -40,6 +40,7 @@ public OnPluginStart()
             );
 
     RegAdminCmd("sm_only", Command_Only, ADMFLAG_SLAY, "[ADMIN] Set to one type of weapon only.");
+    RegAdminCmd("sm_give", Command_Give, ADMFLAG_SLAY, "[ADMIN] Give yourself a weapon");
 
     HookConVarChange(g_Cvar_Enabled, OnEnabledChange);
     HookConVarChange(g_Cvar_TargetWeapon, OnTargetWeaponChange);
@@ -197,6 +198,29 @@ public Action:Command_Only(client, args)
 
     new Handle:menu = CreateMenu(WeaponOnlyMenuHandler);
 
+    BuildWeaponMenu(menu);
+
+    DisplayMenu(menu, client, 20);
+
+    return Plugin_Handled;
+}
+
+public Action:Command_Give(client, args)
+{
+    if(client <= 0) return Plugin_Handled;
+    if(!IsClientInGame(client)) return Plugin_Handled;
+
+    new Handle:menu = CreateMenu(WeaponGiveMenuHandler);
+
+    BuildWeaponMenu(menu);
+
+    DisplayMenu(menu, client, 20);
+
+    return Plugin_Handled;
+}
+
+stock BuildWeaponMenu(Handle:menu)
+{
     SetMenuTitle(menu, "Choose Weapon");
 
     AddMenuItem(menu, "none", "Disable");
@@ -225,16 +249,13 @@ public Action:Command_Only(client, args)
     AddMenuItem(menu, "weapon_smg1", "Gatling Gun");
     AddMenuItem(menu, "weapon_rpg", "RPG");
     AddMenuItem(menu, "weapon_crossbow", "XBow");
+    AddMenuItem(menu, "weapon_ar2", "AR2");
     AddMenuItem(menu, "weapon_357", "HL2 Magnum");
     AddMenuItem(menu, "weapon_pistol", "HL2 Pistol");
     AddMenuItem(menu, "weapon_frag", "HL2 Grenade");
     AddMenuItem(menu, "weapon_physcannon", "Gravity Gun");
     AddMenuItem(menu, "weapon_crowbar", "Crowbar");
     AddMenuItem(menu, "weapon_stunstick", "Stun Stick");
-
-    DisplayMenu(menu, client, 20);
-
-    return Plugin_Handled;
 }
 
 public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
@@ -253,6 +274,27 @@ public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
                 }else{
                     SetConVarString(g_Cvar_TargetWeapon, weapon);
                     SetConVarBool(g_Cvar_Enabled, true);
+                }
+            }
+        case MenuAction_End: CloseHandle(menu);
+    }
+}
+
+public WeaponGiveMenuHandler(Handle:menu, MenuAction:action, param1, param2)
+{
+    switch (action)
+    {
+        case MenuAction_Select:
+            {
+                new client = param1;
+                new String:weapon[32];
+                GetMenuItem(menu, param2, weapon, sizeof(weapon));
+
+                if(StrEqual(weapon, "none"))
+                {
+                    //PASS
+                }else{
+                    ForceEquipWeapon(client, weapon);
                 }
             }
         case MenuAction_End: CloseHandle(menu);
