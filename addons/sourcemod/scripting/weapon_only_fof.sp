@@ -244,6 +244,8 @@ stock BuildWeaponMenu(Handle:menu)
     AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
     AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
 
+    AddMenuItem(menu, "weapon_whiskey", "Whiskey");
+
     AddMenuItem(menu, "weapon_fists_ghost", "FistsGhost");
 
     AddMenuItem(menu, "weapon_smg1", "Gatling Gun");
