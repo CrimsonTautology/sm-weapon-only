@@ -229,6 +229,7 @@ stock BuildWeaponMenu(Handle:menu)
     AddMenuItem(menu, "weapon_machete", "Machete");
     AddMenuItem(menu, "weapon_dynamite", "Dynamite");
     AddMenuItem(menu, "weapon_dynamite_black", "Black Dynamite");
+    AddMenuItem(menu, "weapon_dynamite_belt", "Dynamite Belt");
     AddMenuItem(menu, "weapon_deringer", "Deringer");
     AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
     AddMenuItem(menu, "weapon_schofield", "SW Schofield");
