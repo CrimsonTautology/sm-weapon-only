@@ -248,6 +248,7 @@ stock BuildWeaponMenu(Handle:menu)
     AddMenuItem(menu, "weapon_whiskey", "Whiskey");
 
     AddMenuItem(menu, "weapon_fists_ghost", "FistsGhost");
+    AddMenuItem(menu, "weapon_ghostgun", "Ghost Gun");
 
     AddMenuItem(menu, "weapon_smg1", "Gatling Gun");
     AddMenuItem(menu, "weapon_rpg", "RPG");
