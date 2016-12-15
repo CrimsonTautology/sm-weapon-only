@@ -232,6 +232,7 @@ stock BuildWeaponMenu(Handle:menu)
     AddMenuItem(menu, "weapon_dynamite_belt", "Dynamite Belt");
     AddMenuItem(menu, "weapon_deringer", "Deringer");
     AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
+    AddMenuItem(menu, "weapon_remington_army", "Remington Army 1858");
     AddMenuItem(menu, "weapon_schofield", "SW Schofield");
     AddMenuItem(menu, "weapon_volcanic", "Volcanic Pistol");
     AddMenuItem(menu, "weapon_maresleg", "Mare's Leg");
