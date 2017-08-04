@@ -244,6 +244,7 @@ stock BuildWeaponMenu(Handle:menu)
     AddMenuItem(menu, "weapon_bow", "Bow");
     AddMenuItem(menu, "weapon_carbine", "Smith Carbine");
     AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
+    AddMenuItem(menu, "weapon_spencer", "Spencer Carbine");
     AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
 
     AddMenuItem(menu, "weapon_whiskey", "Whiskey");
