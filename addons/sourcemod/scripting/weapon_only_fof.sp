@@ -22,12 +22,12 @@ new Handle:g_Cvar_TargetWeapon = INVALID_HANDLE;
 
 public OnPluginStart()
 {
-    CreateConVar("sm_weapon_only_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    CreateConVar("sm_weapon_only_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
     g_Cvar_Enabled = CreateConVar(
             "sm_weapon_only",
             "1",
             "Set to 1 to enable the weapon only plugin",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY,
+            FCVAR_REPLICATED | FCVAR_NOTIFY,
             true,
             0.0,
             true,
@@ -36,7 +36,7 @@ public OnPluginStart()
             "sm_weapon_only_weapon",
             "none",
             "The class name of the weapon",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY
+            FCVAR_REPLICATED | FCVAR_NOTIFY
             );
 
     RegAdminCmd("sm_only", Command_Only, ADMFLAG_SLAY, "[ADMIN] Set to one type of weapon only.");
