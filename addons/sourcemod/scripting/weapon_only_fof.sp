@@ -124,17 +124,6 @@ ForceEquipWeapon(client, const String:weapon[])
     ClientCommand(client, tmp);
 }
 
-ForceEquipWeaponAll(const String:weapon[])
-{
-    for (new client=1; client <= MaxClients; client++)
-    {
-        if(!IsClientInGame(client)) continue;
-        if(!IsPlayerAlive(client)) continue;
-
-        ForceEquipWeapon(client, weapon);
-    }
-}
-
 public Action:Timer_Repeat(Handle:timer)
 {
     if(!IsWeaponOnlyEnabled()) return Plugin_Continue;
@@ -271,7 +260,6 @@ public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
     {
         case MenuAction_Select:
             {
-                new client = param1;
                 new String:weapon[32];
                 GetMenuItem(menu, param2, weapon, sizeof(weapon));
 
