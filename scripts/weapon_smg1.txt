@@ -15,10 +15,10 @@ WeaponData
     "bucket_360"            "1"
     "bucket_position_360"   "0"
 
-    "clip_size"             "128"
+    "clip_size"             "32"
     "clip2_size"            "-1"
 
-    "default_clip"          "128"
+    "default_clip"          "32"
     "default_clip2"         "-1"
 
     "primary_ammo"          "Rifle"

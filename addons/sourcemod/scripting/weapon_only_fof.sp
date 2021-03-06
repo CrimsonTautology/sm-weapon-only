@@ -1,28 +1,43 @@
+/**
+ * vim: set ts=4 :
+ * =============================================================================
+ * Weapon Only
+ * Force specific weapons in Fistful of Frags
+ *
+ * Copyright 2021 CrimsonTautology
+ * =============================================================================
+ *
+ */
+
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "1.0.1"
+#define PLUGIN_VERSION "1.10.0"
 #define PLUGIN_NAME  "[FoF] Weapon Only"
 
 #define WEAPON_NAME_SIZE 32
 
-public Plugin:myinfo =
+public Plugin myinfo =
 {
     name = PLUGIN_NAME,
     author = "CrimsonTautology",
     description = "Allows one type of weapon only",
     version = PLUGIN_VERSION,
-    url = "http://github.com/CrimsonTautology/sm_weapon_only"
+    url = "http://github.com/CrimsonTautology/sm-weapon-only"
 };
 
-new Handle:g_Cvar_Enabled      = INVALID_HANDLE;
-new Handle:g_Cvar_TargetWeapon = INVALID_HANDLE;
+ConVar g_Cvar_Enabled;
+ConVar g_Cvar_TargetWeapon;
 
-public OnPluginStart()
+public void OnPluginStart()
 {
-    CreateConVar("sm_weapon_only_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    CreateConVar(
+            "sm_weapon_only_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY
+            | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+
     g_Cvar_Enabled = CreateConVar(
             "sm_weapon_only",
             "1",
@@ -39,44 +54,41 @@ public OnPluginStart()
             FCVAR_REPLICATED | FCVAR_NOTIFY
             );
 
-    RegAdminCmd("sm_only", Command_Only, ADMFLAG_SLAY, "[ADMIN] Set to one type of weapon only.");
-    RegAdminCmd("sm_give", Command_Give, ADMFLAG_SLAY, "[ADMIN] Give yourself a weapon");
+    RegAdminCmd("sm_only", Command_Only, ADMFLAG_SLAY,
+            "[ADMIN] Set to one type of weapon only.");
+    RegAdminCmd("sm_give", Command_Give, ADMFLAG_SLAY,
+            "[ADMIN] Give yourself a weapon.");
 
-    HookConVarChange(g_Cvar_Enabled, OnEnabledChange);
-    HookConVarChange(g_Cvar_TargetWeapon, OnTargetWeaponChange);
+    g_Cvar_Enabled.AddChangeHook(OnEnabledChange);
+    g_Cvar_TargetWeapon.AddChangeHook(OnTargetWeaponChange);
 
     HookEvent("player_spawn", Event_PlayerSpawn);
 
     AutoExecConfig();
 }
 
-public OnMapStart()
+public void OnMapStart()
 {
-    CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
+    CreateTimer(1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newValue[])
+void OnEnabledChange(Handle cvar, const char[] oldValue, const char[] newValue)
 {
     if(cvar != g_Cvar_Enabled) return;
 
-    new bool:was_on = !!StringToInt(oldValue);
-    new bool:now_on = !!StringToInt(newValue);
+    bool was_on = !!StringToInt(oldValue);
+    bool now_on = !!StringToInt(newValue);
 
-    //When changing from on to off
-    if(was_on && !now_on)
-    {
-    }
-
-    //When changing from off to on
+    // when changing from off to on
     if(!was_on && now_on)
     {
-        new String:weapon[WEAPON_NAME_SIZE];
-        GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
+        char weapon[WEAPON_NAME_SIZE];
+        g_Cvar_TargetWeapon.GetString(weapon, sizeof(weapon));
         StripInvalidWeaponsAll(weapon);
     }
 }
 
-public OnTargetWeaponChange(Handle:cvar, const String:oldValue[], const String:newValue[])
+void OnTargetWeaponChange(Handle cvar, const char[] oldValue, const char[] newValue)
 {
     if(cvar != g_Cvar_TargetWeapon) return;
     if(!IsWeaponOnlyEnabled()) return;
@@ -84,39 +96,39 @@ public OnTargetWeaponChange(Handle:cvar, const String:oldValue[], const String:n
     StripInvalidWeaponsAll(newValue);
 }
 
-bool:IsWeaponOnlyEnabled()
+bool IsWeaponOnlyEnabled()
 {
-    return GetConVarBool(g_Cvar_Enabled);
+    return g_Cvar_Enabled.BoolValue;
 }
 
-public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
+void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
     if(IsWeaponOnlyEnabled())
     {
-        new player = GetEventInt(event, "userid");
-        CreateTimer( 0.0, PlayerSpawnDelay, player, TIMER_FLAG_NO_MAPCHANGE );
+        int player = event.GetInt("userid");
+        CreateTimer(0.0, PlayerSpawnDelay, player, TIMER_FLAG_NO_MAPCHANGE);
     }
 }
 
-public Action:PlayerSpawnDelay( Handle:timer, any:player )
+Action PlayerSpawnDelay(Handle timer, any player)
 {
-    new client = GetClientOfUserId(player);
+    int client = GetClientOfUserId(player);
 
     if(client <= 0) return Plugin_Handled;
     if(!IsClientInGame(client)) return Plugin_Handled;
     if(!IsPlayerAlive(client)) return Plugin_Handled;
     if(!IsWeaponOnlyEnabled()) return Plugin_Handled;
 
-    new String:weapon[WEAPON_NAME_SIZE];
-    GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
+    char weapon[WEAPON_NAME_SIZE];
+    g_Cvar_TargetWeapon.GetString(weapon, sizeof(weapon));
     StripInvalidWeapons(client, weapon);
 
     return Plugin_Handled;
 }
 
-ForceEquipWeapon(client, const String:weapon[])
+void ForceEquipWeapon(int client, const char[] weapon)
 {
-    new String:tmp[WEAPON_NAME_SIZE];
+    char tmp[WEAPON_NAME_SIZE];
 
     GivePlayerItem(client, weapon);
 
@@ -124,26 +136,27 @@ ForceEquipWeapon(client, const String:weapon[])
     ClientCommand(client, tmp);
 }
 
-public Action:Timer_Repeat(Handle:timer)
+Action Timer_Repeat(Handle timer)
 {
     if(!IsWeaponOnlyEnabled()) return Plugin_Continue;
 
-    new String:weapon[WEAPON_NAME_SIZE];
-    GetConVarString(g_Cvar_TargetWeapon, weapon, sizeof(weapon));
-    
+    char weapon[WEAPON_NAME_SIZE];
+    g_Cvar_TargetWeapon.GetString(weapon, sizeof(weapon));
+
     StripInvalidWeaponsAll(weapon);
 
     return Plugin_Handled;
 }
 
-StripInvalidWeapons(client, const String:target_weapon[])
+void StripInvalidWeapons(int client, const char[] target_weapon)
 {
-    decl String:class_name[WEAPON_NAME_SIZE], String:target_weapon2[WEAPON_NAME_SIZE];
-    new weapon_ent, strip_occured=false, has_target_weapon=false;
-    new offs = FindSendPropInfo("CBasePlayer","m_hMyWeapons");
+    char class_name[WEAPON_NAME_SIZE], target_weapon2[WEAPON_NAME_SIZE];
+    int weapon_ent;
+    bool strip_occured=false, has_target_weapon=false;
+    int offs = FindSendPropInfo("CBasePlayer","m_hMyWeapons");
 
     Format(target_weapon2, sizeof(target_weapon2), "%s2", target_weapon);
-    for(new i = 0; i <= 47; i++)
+    for(int i = 0; i <= 47; i++)
     {
         weapon_ent = GetEntDataEnt2(client,offs + (i * 4));
         if(weapon_ent == -1) continue;
@@ -169,9 +182,9 @@ StripInvalidWeapons(client, const String:target_weapon[])
 
 }
 
-StripInvalidWeaponsAll(const String:target_weapon[])
+void StripInvalidWeaponsAll(const char[] target_weapon)
 {
-    for (new client=1; client <= MaxClients; client++)
+    for (int client=1; client <= MaxClients; client++)
     {
         if(!IsClientInGame(client)) continue;
         if(!IsPlayerAlive(client)) continue;
@@ -180,110 +193,110 @@ StripInvalidWeaponsAll(const String:target_weapon[])
     }
 }
 
-public Action:Command_Only(client, args)
+Action Command_Only(int client, int args)
 {
     if(client <= 0) return Plugin_Handled;
     if(!IsClientInGame(client)) return Plugin_Handled;
 
-    new Handle:menu = CreateMenu(WeaponOnlyMenuHandler);
+    Menu menu = new Menu(WeaponOnlyMenuHandler);
 
     BuildWeaponMenu(menu);
 
-    DisplayMenu(menu, client, 20);
+    menu.Display(client, 20);
 
     return Plugin_Handled;
 }
 
-public Action:Command_Give(client, args)
+Action Command_Give(int client, int args)
 {
     if(client <= 0) return Plugin_Handled;
     if(!IsClientInGame(client)) return Plugin_Handled;
 
-    new Handle:menu = CreateMenu(WeaponGiveMenuHandler);
+    Menu menu = new Menu(WeaponGiveMenuHandler);
 
     BuildWeaponMenu(menu);
 
-    DisplayMenu(menu, client, 20);
+    menu.Display(client, 20);
 
     return Plugin_Handled;
 }
 
-stock BuildWeaponMenu(Handle:menu)
+void BuildWeaponMenu(Menu menu)
 {
-    SetMenuTitle(menu, "Choose Weapon");
+    menu.SetTitle("Choose Weapon");
 
-    AddMenuItem(menu, "none", "Disable");
-    AddMenuItem(menu, "weapon_knife", "Knife");
-    AddMenuItem(menu, "weapon_axe", "Hatchet");
-    AddMenuItem(menu, "weapon_machete", "Machete");
-    AddMenuItem(menu, "weapon_dynamite", "Dynamite");
-    AddMenuItem(menu, "weapon_dynamite_black", "Black Dynamite");
-    AddMenuItem(menu, "weapon_dynamite_belt", "Dynamite Belt");
-    AddMenuItem(menu, "weapon_deringer", "Deringer");
-    AddMenuItem(menu, "weapon_hammerless", "Hammerless Pocket Revolver");
-    AddMenuItem(menu, "weapon_coltnavy", "Colt Navy 1851");
-    AddMenuItem(menu, "weapon_remington_army", "Remington Army 1858");
-    AddMenuItem(menu, "weapon_schofield", "SW Schofield");
-    AddMenuItem(menu, "weapon_volcanic", "Volcanic Pistol");
-    AddMenuItem(menu, "weapon_maresleg", "Mare's Leg");
-    AddMenuItem(menu, "weapon_peacemaker", "Peacemaker");
-    AddMenuItem(menu, "weapon_walker", "Colt Walker");
-    AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
-    AddMenuItem(menu, "weapon_coachgun", "Coach Shotgun");
-    AddMenuItem(menu, "weapon_shotgun", "Pump Shotgun W1893");
-    AddMenuItem(menu, "weapon_bow", "Bow");
-    AddMenuItem(menu, "weapon_carbine", "Smith Carbine");
-    AddMenuItem(menu, "weapon_henryrifle", "Henry Rifle");
-    AddMenuItem(menu, "weapon_spencer", "Spencer Carbine");
-    AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
+    menu.AddItem("none", "Disable");
+    menu.AddItem("weapon_knife", "Knife");
+    menu.AddItem("weapon_axe", "Hatchet");
+    menu.AddItem("weapon_machete", "Machete");
+    menu.AddItem("weapon_dynamite", "Dynamite");
+    menu.AddItem("weapon_dynamite_black", "Black Dynamite");
+    menu.AddItem("weapon_dynamite_belt", "Dynamite Belt");
+    menu.AddItem("weapon_deringer", "Deringer");
+    menu.AddItem("weapon_hammerless", "Hammerless Pocket Revolver");
+    menu.AddItem("weapon_coltnavy", "Colt Navy 1851");
+    menu.AddItem("weapon_remington_army", "Remington Army 1858");
+    menu.AddItem("weapon_schofield", "SW Schofield");
+    menu.AddItem("weapon_volcanic", "Volcanic Pistol");
+    menu.AddItem("weapon_maresleg", "Mare's Leg");
+    menu.AddItem("weapon_peacemaker", "Peacemaker");
+    menu.AddItem("weapon_walker", "Colt Walker");
+    menu.AddItem("weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
+    menu.AddItem("weapon_coachgun", "Coach Shotgun");
+    menu.AddItem("weapon_shotgun", "Pump Shotgun W1893");
+    menu.AddItem("weapon_bow", "Bow");
+    menu.AddItem("weapon_carbine", "Smith Carbine");
+    menu.AddItem("weapon_henryrifle", "Henry Rifle");
+    menu.AddItem("weapon_spencer", "Spencer Carbine");
+    menu.AddItem("weapon_sharps", "Sharps Rifle");
 
-    AddMenuItem(menu, "weapon_whiskey", "Whiskey");
+    menu.AddItem("weapon_whiskey", "Whiskey");
 
-    AddMenuItem(menu, "weapon_fists_ghost", "FistsGhost");
-    AddMenuItem(menu, "weapon_ghostgun", "Ghost Gun");
+    menu.AddItem("weapon_fists_ghost", "FistsGhost");
+    menu.AddItem("weapon_ghostgun", "Ghost Gun");
 
-    AddMenuItem(menu, "weapon_smg1", "Gatling Gun");
-    AddMenuItem(menu, "weapon_rpg", "RPG");
-    AddMenuItem(menu, "weapon_crossbow", "XBow");
-    AddMenuItem(menu, "weapon_ar2", "AR2");
-    AddMenuItem(menu, "weapon_357", "HL2 Magnum");
-    AddMenuItem(menu, "weapon_pistol", "HL2 Pistol");
-    AddMenuItem(menu, "weapon_frag", "HL2 Grenade");
-    AddMenuItem(menu, "weapon_physcannon", "Gravity Gun");
-    AddMenuItem(menu, "weapon_crowbar", "Crowbar");
-    AddMenuItem(menu, "weapon_stunstick", "Stun Stick");
+    menu.AddItem("weapon_smg1", "Gatling Gun");
+    menu.AddItem("weapon_rpg", "RPG");
+    menu.AddItem("weapon_crossbow", "XBow");
+    menu.AddItem("weapon_ar2", "AR2");
+    menu.AddItem("weapon_357", "HL2 Magnum");
+    menu.AddItem("weapon_pistol", "HL2 Pistol");
+    menu.AddItem("weapon_frag", "HL2 Grenade");
+    menu.AddItem("weapon_physcannon", "Gravity Gun");
+    menu.AddItem("weapon_crowbar", "Crowbar");
+    menu.AddItem("weapon_stunstick", "Stun Stick");
 }
 
-public WeaponOnlyMenuHandler(Handle:menu, MenuAction:action, param1, param2)
+int WeaponOnlyMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 {
     switch (action)
     {
         case MenuAction_Select:
             {
-                new String:weapon[32];
-                GetMenuItem(menu, param2, weapon, sizeof(weapon));
+                char weapon[32];
+                menu.GetItem(param2, weapon, sizeof(weapon));
 
                 if(StrEqual(weapon, "none"))
                 {
-                    SetConVarBool(g_Cvar_Enabled, false);
+                    g_Cvar_Enabled.SetBool(false);
                 }else{
-                    SetConVarString(g_Cvar_TargetWeapon, weapon);
-                    SetConVarBool(g_Cvar_Enabled, true);
+                    g_Cvar_TargetWeapon.SetString(weapon);
+                    g_Cvar_Enabled.SetBool(true);
                 }
             }
-        case MenuAction_End: CloseHandle(menu);
+        case MenuAction_End: delete menu;
     }
 }
 
-public WeaponGiveMenuHandler(Handle:menu, MenuAction:action, param1, param2)
+int WeaponGiveMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 {
     switch (action)
     {
         case MenuAction_Select:
             {
-                new client = param1;
-                new String:weapon[32];
-                GetMenuItem(menu, param2, weapon, sizeof(weapon));
+                int client = param1;
+                char weapon[32];
+                menu.GetItem(param2, weapon, sizeof(weapon));
 
                 if(StrEqual(weapon, "none"))
                 {
@@ -292,6 +305,6 @@ public WeaponGiveMenuHandler(Handle:menu, MenuAction:action, param1, param2)
                     ForceEquipWeapon(client, weapon);
                 }
             }
-        case MenuAction_End: CloseHandle(menu);
+        case MenuAction_End: delete menu;
     }
 }
